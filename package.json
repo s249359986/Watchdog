@@ -1,0 +1,11 @@
+{
+    "name": "my-pm2",
+    "version": "1.0.0",
+    "bin": {
+        "mypm2": "./daemon.js"
+    },
+    "dependencies": {
+        "commander": "^11.1.0",
+        "pidusage": "^4.0.1"
+    }
+}
