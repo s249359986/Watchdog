@@ -1,8 +1,8 @@
 {
-    "name": "nk",
+    "name": "watchdog",
     "version": "1.0.0",
     "bin": {
-        "nk": "./daemon.js"
+        "wd": "./daemon.js"
     },
     "dependencies": {
         "commander": "^11.1.0",
