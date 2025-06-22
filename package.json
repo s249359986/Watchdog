@@ -1,8 +1,8 @@
 {
-    "name": "my-pm2",
+    "name": "nk",
     "version": "1.0.0",
     "bin": {
-        "mypm2": "./daemon.js"
+        "nk": "./daemon.js"
     },
     "dependencies": {
         "commander": "^11.1.0",
