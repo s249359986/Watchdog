@@ -4,6 +4,7 @@ const pidusage = require("pidusage");
 const fs = require("fs");
 const os = require("os");
 const Logger = require("./logger");
+const PlatformAdapter = require('./platform-adapter');
 
 const logger = new Logger();
 
@@ -219,27 +220,19 @@ class ProcessDaemon {
         const pidPath = path.join(tempDir, pidFile);
         console.log('正在检查PID文件:', pidPath);
         const pid = parseInt(fs.readFileSync(pidPath, 'utf8'));
-        try {
-          const psCmd = `ps -p ${pid} -o command=`;
-          const output = execSync(psCmd, { encoding: 'utf8' }).trim();
-          if (output.includes('node')) {
-            const name = pidFile.replace('mypm2-', '').replace('.pid', '');
-            const args = output.split(/\s+/);
-            const scriptPath = args.find(arg => arg.endsWith('.js')) || name;
-            const daemon = new ProcessDaemon(scriptPath, {
-              name,
-              isRestore: true
-            });
-            daemon.child = { pid };
-            daemon.startTime = Date.now();
-            processes.push(daemon);
-          } else {
-            fs.unlinkSync(pidPath);
-          }
-        } catch (e) {
-          if (e.status === 1) {
-            fs.unlinkSync(pidPath);
-          }
+        const processInfo = PlatformAdapter.getProcessInfo(pid);
+        if (PlatformAdapter.isNodeProcess(processInfo)) {
+          const name = pidFile.replace('mypm2-', '').replace('.pid', '');
+          const scriptPath = PlatformAdapter.getScriptPathFromProcessInfo(processInfo) || name;
+          const daemon = new ProcessDaemon(scriptPath, {
+            name,
+            isRestore: true
+          });
+          daemon.child = { pid };
+          daemon.startTime = Date.now();
+          processes.push(daemon);
+        } else {
+          fs.unlinkSync(pidPath);
         }
       } catch (err) {
         console.error(`处理PID文件失败: ${pidFile}`, err);

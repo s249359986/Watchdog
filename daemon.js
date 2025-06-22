@@ -5,6 +5,7 @@ const path = require("path");
 const { Command } = require("commander");
 const Logger = require("./logger");
 const ProcessDaemon = require("./process-daemon");
+const PlatformAdapter = require('./platform-adapter');
 const logger = new Logger();
 
 
@@ -124,14 +125,11 @@ program
           console.log('无法找到日志文件');
           return;
         }
-
-        const tail = spawn('tail', ['-f', logFile]);
-        
-        tail.stdout.on('data', (data) => {
-          process.stdout.write(data);
-        });
-
-        // 处理 Ctrl+C
+        const tail = PlatformAdapter.tailLogFile(
+          logFile,
+          (data) => process.stdout.write(data),
+          () => process.exit()
+        );
         process.on('SIGINT', () => {
           tail.kill();
           process.exit();
