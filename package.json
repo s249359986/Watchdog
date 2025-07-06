@@ -1,8 +1,8 @@
 {
-    "name": "watchdog",
-    "version": "1.0.0",
+    "name": "wd-node",
+    "version": "1.0.1",
     "bin": {
-        "wd": "./daemon.js"
+        "wd": "./cli.js"
     },
     "dependencies": {
         "commander": "^11.1.0",
