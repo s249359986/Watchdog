@@ -1,6 +1,6 @@
 {
-    "name": "watchdog",
-    "version": "1.0.0",
+    "name": "wd-node",
+    "version": "1.0.2",
     "bin": {
         "wd": "./daemon.js"
     },

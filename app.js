@@ -1,8 +1,12 @@
 
 const http = require('http');
+const url = require('url');
 
 const server = http.createServer((req, res) => {
   res.writeHead(200, {'Content-Type': 'text/plain'});
+  if (query.name === 'a') {
+    throw new Error('测试异常：name=a 时抛出错误');
+  }
   res.end('Hello from mypm2 HTTP server\n');
   console.log(`Request received at ${new Date().toISOString()}`);
 });
