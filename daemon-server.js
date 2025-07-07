@@ -12,8 +12,10 @@ const logger = new Logger();
 
 const server = net.createServer(socket => {
   socket.on('data', async (data) => {
-    let msg;
-    try { msg = JSON.parse(data.toString()); } catch { return; }
+    let msg;   
+    try { msg = JSON.parse(data.toString()); } catch(e) { 
+      logger.write('system',JSON.stringify(e));
+      return; }    
     if (msg.cmd === 'start') {
       if (!managed[msg.name]) {
         managed[msg.name] = new ProcessDaemon(msg.script, { name: msg.name });

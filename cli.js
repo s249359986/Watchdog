@@ -15,6 +15,7 @@ function ensureDaemon(cb) {
     cb();
   });
   client.on('error', () => {
+    console.log("守护进程不存在，自动启动")
     // 守护进程不存在，自动启动
     const daemonPath = path.resolve(__dirname, 'daemon-server.js');
     const daemon = fork(daemonPath, [], {
@@ -28,7 +29,7 @@ function ensureDaemon(cb) {
     const maxRetries = 20;
     const waitForSocket = () => {
       if (fs.existsSync(SOCKET_PATH)) {
-        setTimeout(cb, 100);
+        setTimeout(cb, 500);
       } else if (retries++ < maxRetries) {
         setTimeout(waitForSocket, 100);
       } else {
@@ -59,7 +60,7 @@ program
   .command('start [script]')
   .option('-c, --config <file>', '配置文件')
   .action((script, options) => {
-    ensureDaemon(() => {
+       ensureDaemon(() => {
       if (options.config) {
         send({ cmd: 'start-config', config: options.config }, res => {
           console.log(res.ok ? res.msg : '启动失败: ' + res.msg);
@@ -75,7 +76,7 @@ program
 program
   .command('list')
   .action(() => {
-    ensureDaemon(() => {
+     ensureDaemon(() => {
       send({ cmd: 'list' }, res => {
         console.table(res.list);
       });
@@ -95,7 +96,7 @@ program
 program
   .command('logs <name> [type]')
   .action((name, type) => {
-    ensureDaemon(() => {
+      ensureDaemon(() => {
       send({ cmd: 'logs', name, type: type || 'out' }, res => {
         if (res.ok) {
           console.log(res.content);
