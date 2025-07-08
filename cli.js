@@ -7,10 +7,18 @@ const path = require('path');
 const SOCKET_PATH = '/tmp/wd-daemon.sock';
 const commander = require('commander');
 const program = new commander.Command();
+const connectionOption = {
+  host: '127.0.0.1',
+  port: 2888
+}
 
 // 自动检测并启动守护进程
 function ensureDaemon(cb) {
-  const client = net.createConnection(SOCKET_PATH, () => {
+  // const client = net.createConnection(SOCKET_PATH, () => {
+  //   client.end();
+  //   cb();
+  // });
+    const client = net.createConnection(connectionOption, () => {
     client.end();
     cb();
   });
@@ -28,7 +36,7 @@ function ensureDaemon(cb) {
     let retries = 0;
     const maxRetries = 20;
     const waitForSocket = () => {
-      if (fs.existsSync(SOCKET_PATH)) {
+      if (true || fs.existsSync(SOCKET_PATH)) {
         setTimeout(cb, 500);
       } else if (retries++ < maxRetries) {
         setTimeout(waitForSocket, 100);
@@ -42,9 +50,14 @@ function ensureDaemon(cb) {
 }
 
 function send(cmdObj, cb) {
-  const client = net.createConnection(SOCKET_PATH, () => {
+  // const client = net.createConnection(SOCKET_PATH, () => {
+  //   client.write(JSON.stringify(cmdObj));
+  // });
+  const client = net.createConnection(connectionOption, () => {
     client.write(JSON.stringify(cmdObj));
   });
+
+
   client.on('data', data => {
     cb(JSON.parse(data.toString()));
     client.end();

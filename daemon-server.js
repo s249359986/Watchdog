@@ -78,6 +78,10 @@ const server = net.createServer(socket => {
   });
 });
 
-server.listen(SOCKET_PATH, () => {
+// server.listen(SOCKET_PATH, () => {
+//   console.log('wd 守护主进程已启动:', SOCKET_PATH);
+// });
+
+server.listen(2888, '127.0.0.1', () => {
   console.log('wd 守护主进程已启动:', SOCKET_PATH);
 });
